@@ -1,0 +1,35 @@
+name: Coverage Check
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+    branches:
+      - main
+
+jobs:
+  check-coverage:
+    runs-on: ubuntu-latest
+
+    steps:
+      # Step 1: Checkout the repository code
+      - name: Checkout code
+        uses: actions/checkout@v3
+
+      # Step 2: Validate coverage-report.txt
+      - name: Check Coverage
+        run: |
+          if [ ! -f coverage-report.txt ]; then
+            echo "Error: coverage-report.txt not found."
+            exit 1
+          fi
+
+          COVERAGE=$(cat coverage-report.txt)
+
+          if [ "$COVERAGE" -lt 80 ]; then
+            echo "Error: Code coverage is $COVERAGE%, which is below the required 80%."
+            exit 1
+          fi
+
+          echo "Code coverage is $COVERAGE%. Check passed."
